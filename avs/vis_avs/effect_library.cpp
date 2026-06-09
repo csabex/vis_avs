@@ -66,6 +66,7 @@ bool make_effect_lib() {
     MAKE_EFFECT_LIB_ENTRY(BassSpin);
     MAKE_EFFECT_LIB_ENTRY(MovingParticle);
     MAKE_EFFECT_LIB_ENTRY(RotoBlitter);
+    MAKE_EFFECT_LIB_ENTRY(BlitterFeedback);
     MAKE_EFFECT_LIB_ENTRY(SVP);
     MAKE_EFFECT_LIB_ENTRY(Colorfade);
     MAKE_EFFECT_LIB_ENTRY(ColorClip);

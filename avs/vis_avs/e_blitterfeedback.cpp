@@ -149,23 +149,21 @@ int E_BlitterFeedback::blitter_normal(uint32_t* framebuffer,
             uint32_t* src = ((uint32_t*)framebuffer) + (s_y >> 16) * w;
             int32_t ypart = (s_y >> 8) & 0xff;
             s_y += ds_x;
-#ifdef NO_MMX
             {
-                ypart = (ypart * 255) >> 8;
                 int32_t x = w / 4;
                 while (x--) {
-                    fbout[0] = BLEND4(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
+                    fbout[0] = blend_bilinear_2x2(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
                     s_x += ds_x;
-                    fbout[1] = BLEND4(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
+                    fbout[1] = blend_bilinear_2x2(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
                     s_x += ds_x;
-                    fbout[2] = BLEND4(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
+                    fbout[2] = blend_bilinear_2x2(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
                     s_x += ds_x;
-                    fbout[3] = BLEND4(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
+                    fbout[3] = blend_bilinear_2x2(src + (s_x >> 16), w, (s_x >> 8) & 0xff, ypart);
                     s_x += ds_x;
                     fbout += 4;
                 }
             }
-#else
+#if 0  // dead MMX paths removed — NO_MMX is always defined for arm64
             {
                 int64_t mem5 = 0;
                 int64_t mem7 = 0;
