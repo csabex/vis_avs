@@ -98,11 +98,11 @@ class AVS_Instance {
         /* Global memory for such things as gmegabuf & regXX vars. Usually shared among
            all EEL VMs (i.e. an intra-effect shared code context) but we need separation
            per AVS instance. */
-        void* global_ram;
-        char visdata[2][2][AUDIO_BUFFER_LEN];
-        bool log_errors;
-        const char* (*pre_compile_hook)(void* ctx, char* code, void* avs_instance);
-        void (*post_compile_hook)(void* avs_instance);
+        void* global_ram = nullptr;
+        char visdata[2][2][AUDIO_BUFFER_LEN] = {};
+        bool log_errors = false;
+        const char* (*pre_compile_hook)(void* ctx, char* code, void* avs_instance) = nullptr;
+        void (*post_compile_hook)(void* avs_instance) = nullptr;
 
         void error(const char* error_str);
         void clear_errors();
