@@ -150,11 +150,13 @@ void E_Texer2::load_image() {
         return;
     }
     char filename[MAX_PATH];
+    const char* image_name = this->config.image.c_str();
+    if (image_name[0] == '?') image_name++;  // strip legacy base-path prefix
     int printed = snprintf(filename,
                            MAX_PATH,
                            "%s/%s",
                            this->avs->base_path.c_str(),
-                           this->config.image.c_str());
+                           image_name);
     if (printed >= MAX_PATH) {
         filename[MAX_PATH - 1] = '\0';
     }
