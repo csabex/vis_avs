@@ -61,7 +61,6 @@ bool make_effect_lib() {
     MAKE_EFFECT_LIB_ENTRY(DotPlane);
     MAKE_EFFECT_LIB_ENTRY(OscilloscopeStar);
     MAKE_EFFECT_LIB_ENTRY(Fadeout);
-    MAKE_EFFECT_LIB_ENTRY(BlitterFeedback);
     MAKE_EFFECT_LIB_ENTRY(OnBeatClear);
     MAKE_EFFECT_LIB_ENTRY(Blur);
     MAKE_EFFECT_LIB_ENTRY(BassSpin);
@@ -107,10 +106,7 @@ bool make_effect_lib() {
     MAKE_EFFECT_LIB_ENTRY(ChannelShift);
     MAKE_EFFECT_LIB_ENTRY(ColorReduction);
     MAKE_EFFECT_LIB_ENTRY(Multiplier);
-    MAKE_EFFECT_LIB_ENTRY(VideoDelay);
-    MAKE_EFFECT_LIB_ENTRY(MultiDelay);
     MAKE_EFFECT_LIB_ENTRY(Convolution);
-    MAKE_EFFECT_LIB_ENTRY(Texer2);
     MAKE_EFFECT_LIB_ENTRY(Normalise);
     MAKE_EFFECT_LIB_ENTRY(ColorMap);
     MAKE_EFFECT_LIB_ENTRY(AddBorders);
