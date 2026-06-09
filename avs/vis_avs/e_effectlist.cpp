@@ -627,7 +627,7 @@ void E_EffectList::smp_render_list(int min_threads,
 }
 
 uint32_t E_EffectList::smp_thread_proc(void* parm) {
-    int which = (int)parm;
+    int which = (int)(intptr_t)parm;
     void* hdls[2] = {E_EffectList::smp.thread_start[which],
                      E_EffectList::smp.quit_signal};
     for (;;) {
