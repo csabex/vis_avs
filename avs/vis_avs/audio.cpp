@@ -99,7 +99,6 @@ int32_t Audio::set(const float* audio_left,
                    size_t audio_length,
                    size_t samples_per_second,
                    int64_t end_time_samples) {
-    printf("set: %ld\n", end_time_samples);
     auto remaining = this->samples_remaining(end_time_samples);
     if (audio_length != 0 && this->latest_sample_time < end_time_samples) {
         if (audio_left == nullptr || audio_right == nullptr
