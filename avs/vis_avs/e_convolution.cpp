@@ -3,6 +3,7 @@
 // mail: cfp@myrealbox.com
 
 #include "e_convolution.h"
+#include <vector>
 
 #include "constants.h"
 
@@ -148,10 +149,48 @@ int E_Convolution::render(char[2][2][576],
         this->height = h;
         this->need_draw_update = true;
     }
+#if defined(__x86_64__) || defined(__i386__)
     if (this->need_draw_update) {
         this->create_draw_func();
     }
     return this->draw(framebuffer, fbout, this->m64_farray);
+#else
+    // Portable C path: create_draw_func() emits x86 machine code, which is
+    // unusable on arm64 (executing it crashes). Compute the 7x7 convolution in C.
+    const int D = CONVO_KERNEL_DIM, R = D / 2;
+    int sc = (int)this->config.scale ? (int)this->config.scale : 1;
+    int bias = (int)this->config.bias;
+    auto* in = (uint32_t*)framebuffer;
+    auto* out = (uint32_t*)fbout;
+    auto conv = [&](uint32_t* src, uint32_t* dst) {
+        for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
+            int sr = 0, sg = 0, sb = 0;
+            for (int ky = 0; ky < D; ++ky) for (int kx = 0; kx < D; ++kx) {
+                int wgt = (int)this->config.kernel[ky * D + kx].value;
+                if (!wgt) continue;
+                int sx = x + kx - R, sy = y + ky - R;
+                if (this->config.wrap) { sx = ((sx % w) + w) % w; sy = ((sy % h) + h) % h; }
+                else { if (sx < 0) sx = 0; if (sx >= w) sx = w - 1; if (sy < 0) sy = 0; if (sy >= h) sy = h - 1; }
+                uint32_t c = src[sy * w + sx];
+                sr += (int)((c >> 16) & 0xff) * wgt; sg += (int)((c >> 8) & 0xff) * wgt; sb += (int)(c & 0xff) * wgt;
+            }
+            sr /= sc; sg /= sc; sb /= sc;
+            if (this->config.absolute) { sr = sr < 0 ? -sr : sr; sg = sg < 0 ? -sg : sg; sb = sb < 0 ? -sb : sb; }
+            sr += bias; sg += bias; sb += bias;
+            if (sr < 0) sr = 0; else if (sr > 255) sr = 255;
+            if (sg < 0) sg = 0; else if (sg > 255) sg = 255;
+            if (sb < 0) sb = 0; else if (sb > 255) sb = 255;
+            dst[y * w + x] = ((uint32_t)sr << 16) | ((uint32_t)sg << 8) | (uint32_t)sb;
+        }
+    };
+    conv(in, out);
+    if (this->config.two_pass) {
+        static thread_local std::vector<uint32_t> tmp;
+        tmp.assign(out, out + (size_t)w * h);
+        conv(tmp.data(), out);
+    }
+    return 1;
+#endif
 }
 
 #define appenddraw(a) ((unsigned char*)draw)[this->code_length++] = a
