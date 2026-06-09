@@ -872,9 +872,17 @@ static void *__newBlock_align(llBlock **start, int size, int align, int is_for_c
       if (llb == NULL) return NULL;
     #else
       #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
-      llb = (llBlock *)mmap(NULL,alloc_amt, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,-1,0);
+      llb = (llBlock *)mmap(NULL,alloc_amt, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE
+#ifdef MAP_JIT
+        |MAP_JIT
+#endif
+        ,-1,0);
       #else
-      llb = (llBlock *)mmap(NULL,alloc_amt, PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);
+      llb = (llBlock *)mmap(NULL,alloc_amt, PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE
+#ifdef MAP_JIT
+        |MAP_JIT
+#endif
+        ,-1,0);
       #endif
       if (llb == MAP_FAILED) return NULL;
     #endif
