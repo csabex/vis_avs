@@ -115,7 +115,11 @@ void AVS_Instance::update_time(int64_t time_in_ms) {
             this->current_time_in_ms += 2;
         }
     } else {  // Realtime Mode
-        if (this->last_time_mode == AVS_TIME_MODE_VIDEO) {
+        if (this->last_time_mode == AVS_TIME_MODE_UNKNOWN) {
+            // First realtime frame: anchor the clock at zero so that EEL
+            // gettime(0) starts near 0 instead of at system uptime.
+            this->time_mode_switch_offset = timer_ms();
+        } else if (this->last_time_mode == AVS_TIME_MODE_VIDEO) {
             // See above about switching time modes.
             // When switching from video to realtime mode, similar requirements apply.
             // Offset by the previous time, add the current realtime and subtract 1.
